@@ -7,14 +7,14 @@ $nemo = $_POST['nemo'];
 //echo "argumentos funci&oacuten tabla: L&iacutenea:" . $linea . " nemonico:" . $nemo;
 echo "Fecha: ".date('d-m-Y');
 
-$conn7 = mysqli_connect("50.192.92.18", "myuser", "myclave", "pruebas1");
+$conn7 = mysqli_connect("localhost", "myuser", "myclave", "pruebas1");
 // Check connection
 if ($conn7->connect_error) {
   die("Connection failed: " . $conn7->connect_error);
 }
-  $sql = "SELECT Evento, Hora FROM trama WHERE Evento LIKE '%".$nemo." en MT%' and fecha=CURRENT_DATE order by hora desc limit 15";
+  $sql = "SELECT Evento, Hora FROM trama WHERE Evento LIKE '%".$nemo." en MT%' and fecha='2020-07-21' order by hora desc limit 15";
   $result = mysqli_query($conn7,$sql);
-  $sql2 = "SELECT Hora FROM trama WHERE Evento LIKE '%".$nemo." en MT%' and fecha=CURRENT_DATE order by Hora desc limit 1, 16";
+  $sql2 = "SELECT Hora FROM trama WHERE Evento LIKE '%".$nemo." en MT%' and fecha='2020-07-21' order by Hora desc limit 1, 16";
   //2000 numero superior al maximo de registros esperados en un día.
   $result2 = mysqli_query($conn7,$sql2);
   if ($result->num_rows > 0) {

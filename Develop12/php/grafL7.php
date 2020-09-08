@@ -19,7 +19,7 @@ echo "<body>";
   echo "<div class='row'>";
   echo "<div class='col'>";
 
-  $conn = mysqli_connect("50.192.92.18", "myuser", "myclave", "pruebas1");
+  $conn = mysqli_connect("localhost", "myuser", "myclave", "pruebas1");
   if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
   }
