@@ -44,9 +44,6 @@ $chart_data2='';
       $seconds = $intervalo->s + $intervalo->i*60;
 
 
-
-
-
       $chart_data .= "{ Hora:'".$row["Hora"]."', Intervalo:". $seconds/60 ."}, ";
        // $chart_data2 .= "{ Hora:'".$row["Hora"]."', min:". $row["Hora"] ."}, ";
 
