@@ -14,14 +14,14 @@ $linea = $_POST['linea'];
 $nemo = $_POST['nemo'];
 //echo "<p style='text-align:center;'>L&iacutenea:" . $linea . " nem&oacutenico:" . $nemo."</p>";
 
-$conn = mysqli_connect("50.192.92.17", "myuser", "myclave", "pruebas1");
+$conn = mysqli_connect("localhost", "myuser", "myclave", "pruebas1");
 // Check connection
 if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
-  $sql = "SELECT Evento, Hora FROM linea".$linea." WHERE Evento LIKE '%".$nemo." en MT%' and fecha=CURRENT_DATE order by hora desc  limit 15";
+  $sql = "SELECT Evento, Hora FROM linea".$linea." WHERE Evento LIKE '%".$nemo." en MT%' and fecha='2019-08-27' order by hora desc  limit 10";
   $result = mysqli_query($conn,$sql);
-  $sql2 = "SELECT Hora FROM linea".$linea." WHERE Evento LIKE '%".$nemo." en MT%' and fecha=CURRENT_DATE order by Hora desc limit 1, 16";
+  $sql2 = "SELECT Hora FROM linea".$linea." WHERE Evento LIKE '%".$nemo." en MT%' and fecha='2019-08-27' order by Hora desc limit 1, 9";
   //2000 numero superior al maximo de registros esperados en un día.
   $result2 = mysqli_query($conn,$sql2);
 

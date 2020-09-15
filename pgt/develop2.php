@@ -8,10 +8,8 @@
 <head>
 
     <script src="libs/jquery-3.5.1.min.js"></script>
-    <link rel="stylesheet" href="./libs/morris.css">
-    <script src="./libs/raphael-min.js"></script>
-    <script src="./libs/morris.min.js"></script>
     <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
 
     <title>Itinerarios</title>
     <meta http-equiv="refresh" content="50" />
@@ -41,18 +39,21 @@
         </tr>
 
   <?php
-  $conn = mysqli_connect("50.192.92.17", "myuser", "myclave", "pruebas1");
+  $conn = mysqli_connect("localhost", "myuser", "myclave", "pruebas1");
   // Check connection
   if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
   }
-  $sql = "SELECT Evento, Hora FROM linea1 where Evento LIKE '%PAN en MT%' and Fecha=CURRENT_DATE order by hora desc limit 15";
+  $sql = "SELECT Evento, Hora FROM linea1 where Evento LIKE '%PAN en MT%' and Fecha='2019-08-27' order by hora desc";
   $result = mysqli_query($conn,$sql);
-  $sql2 = "SELECT Hora FROM linea1 where Evento LIKE '%PAN en MT%' and Fecha=CURRENT_DATE order by Hora desc limit 1, 5000";
+  $sql2 = "SELECT Hora FROM linea1 where Evento LIKE '%PAN en MT%' and Fecha='2019-08-27' order by Hora desc limit 1, 5000";
   //2000 numero superior al maximo de registros esperados en un día.
   $result2 = mysqli_query($conn,$sql2);
 
-  $chart_data='';
+  $valoresHora=array();//hora
+  $valoresInt=array();//min
+
+  //$chart_data='';
   //$sum = 0;
 
   if ($result->num_rows > 0) {
@@ -64,7 +65,11 @@
 
         $seconds = $intervalo->s + $intervalo->i*60;
       //$sum+= $intervalo;
-        $chart_data .= "{ Hora:'".$row["Hora"]."', Intervalo:". $seconds/60 ."}, ";
+
+        $valoresHora[]=$row["Hora"];
+        $valoresInt[]=$seconds/60;
+
+        //$chart_data .= "{ Hora:'".$row["Hora"]."', Intervalo:". $seconds/60 ."}, ";
         
         echo "<tr>";
         echo "<th>PAN</th>";
@@ -77,7 +82,32 @@
     //echo "</table>";
   } else { echo "0 results"; }
 
-  $chart_data = substr($chart_data, 0, -2);
+  $conn2 = mysqli_connect("localhost", "myuser", "myclave", "pruebas1");
+  // Check connection
+  if ($conn->connect_error) {
+      die("Connection failed: " . $conn->connect_error);
+  }
+  $sql3="SELECT hora, min as minimo, max as maximo from grafl1 order by hora desc";
+  $result3=mysqli_query($conn2,$sql3);
+  $valoresX=array();//hora
+  $valoresMin=array();//min
+  $valoresMax=array();//max
+
+  while ($ver=mysqli_fetch_row($result3)) {
+      // code..{}.
+      $valoresX[]=$ver[0];
+      $valoresMin[]=$ver[1];
+      $valoresMax[]=$ver[2];
+  }
+
+  $datosX=json_encode($valoresX);
+  $datosMin=json_encode($valoresMin);
+  $datosMax=json_encode($valoresMax);
+
+  $datosHora=json_encode($valoresHora);
+  $datosInt=json_encode($valoresInt);
+
+  //$chart_data = substr($chart_data, 0, -2);
   mysqli_free_result($result);
   mysqli_free_result($result2);
   mysqli_close($conn);
@@ -93,7 +123,7 @@
         <h2 align="center">Grafico de Control de Intervalos</h2>
         <h3 align="center">Linea_1</h3>
         <br /><br />
-        <div id="chart"></div>
+        <div id="graficaLineal"></div>
 
         </tbody>
 
@@ -107,21 +137,83 @@
 </html>
 
 
-<script>
-    Morris.Line({
-        element : 'chart',
-        data:[<?php echo $chart_data; ?>],
-        xkey:'Hora',
-        ykeys: ['Intervalo'],
-        parseTime: false,
-        labels:['Intervalo'],
-        xLabels: 'day',
-        xLabelAngle: 45,
-        goals: [2.89, 0.98],
-        goalStrokeWidth: 5,
-        pointSize: 2,
-        hideHover: 'auto',
-        resize: true
+<script type="text/javascript">
+    function crearCadenaLineal(json){
+        var parsed  = JSON.parse(json);
+        var arr = [];
+        for (var x in parsed) {
+            arr.push(parsed[x]);
+        }
+        return arr;
+    }
 
-    });
+</script>
+
+
+
+<script type="text/javascript">
+
+    datosX=crearCadenaLineal('<?php echo $datosX ?>');
+    datosMin=crearCadenaLineal('<?php echo $datosMin ?>');
+    datosMax=crearCadenaLineal('<?php echo $datosMax ?>');
+
+    datosHora=crearCadenaLineal('<?php echo $datosHora ?>');
+    datosInt=crearCadenaLineal('<?php echo $datosInt ?>');
+
+
+    var trace1 = {
+        x: datosX,
+        y: datosMin,
+        name: 'Minimo',
+        mode: 'lines',
+        line: {
+            color: 'blue',
+            width: 2,
+            dash: 'dash'
+        }
+    };
+
+    var trace2 = {
+        x: datosX,
+        y: datosMax,
+        name: 'Maximo',
+        mode: 'lines',
+        line: {
+            color: 'red',
+            width: 2,
+            dash: 'dash'
+        }
+    };
+
+    var trace3 = {
+        x: datosHora,
+        y: datosInt,
+        name: 'Intervalo',
+        xaxis: 'x2',
+        yaxis: 'y2',
+        type: 'scatter'
+    };
+
+    var layout = {
+        title: '',
+        xaxis2: {
+            overlaying: 'x',
+            side: 'top',
+            showticklabels: false,
+            title: ''
+
+        },
+        yaxis2: {
+            title: 'Intervalos',
+            overlaying: 'y',
+            range: [0, 16],
+            side: 'right'
+        }
+    };
+
+    var data = [trace1, trace2,trace3];
+
+    Plotly.newPlot('graficaLineal', data, layout);
+
+
 </script>
