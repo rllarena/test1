@@ -5,16 +5,16 @@
 <?php require_once('conn/connect.php') ?>
 <html>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset= ISO-8859-1"/>
+		<meta http-equiv="Content-Type" content="text/html, charset= ISO-8859-1"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta http-equiv="X-UA-Compatible" content="ie=edge">
 		<title>Itinerarios</title>
 		<link rel="stylesheet" type="text/css" href="css/estilos.css">
     <link rel="stylesheet" type="text/css" href="css/tab.css">
 
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="libs/bootstrap.min.css">
+  	<script src="libs/jquery.min.js"></script>
+  	<script src="libs/bootstrap.min.js"></script>
 
     <script type="text/javascript" src="js/geti.js"></script>
 

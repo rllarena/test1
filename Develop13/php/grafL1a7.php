@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"> </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+    <script src="./libs/raphael-min.js"> </script>
+    <script src="./libs/morris.min.js"></script>
     <link rel="stylesheet" type="text/css" href="php/estilos.css">
 </head>
 
@@ -18,21 +18,23 @@ echo "<body>";
   echo "<div class='row'>";
   echo "<div class='col'>";
 
-  $conn = mysqli_connect("localhost", "myuser", "myclave", "pruebas1");
+  $conn = mysqli_connect("50.192.92.17", "myuser", "myclave", "pruebas1");
   if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
   }
 
   if ($linea!='7'){
     //echo "ES DIFERENTE DE LINEA 7.<br>";
-    $sql = "SELECT Evento, Hora FROM linea".$linea." WHERE Evento LIKE '%".$nemo." en MT%' and fecha=CURRENT_DATE order by hora desc  limit 15";
-    $sql2 = "SELECT Hora FROM linea".$linea." WHERE Evento LIKE '%".$nemo." en MT%' and fecha=CURRENT_DATE order by Hora desc limit 1, 16";
+    $sql = "SELECT Evento, Hora FROM linea".$linea." WHERE Evento LIKE '%".$nemo." en MT%' and fecha=current_date order by hora desc  limit 150";
+    $sql2 = "SELECT Hora FROM linea".$linea." WHERE Evento LIKE '%".$nemo." en MT%' and fecha=current_date order by Hora desc limit 1, 160";
     $result = mysqli_query($conn,$sql);
     $result2 = mysqli_query($conn,$sql2);
   } else {
     //echo "ES IGUAL A LINEA 7.<br>";
-    $sql = "SELECT Evento, Hora FROM trama WHERE Evento LIKE '%".$nemo." en MT%' and fecha=CURRENT_DATE order by hora desc  limit 15";
-    $sql2 = "SELECT Hora FROM trama WHERE Evento LIKE '%".$nemo." en MT%' and fecha=CURRENT_DATE order by Hora desc limit 1, 16";
+      $conn = mysqli_connect("50.192.92.18", "myuser", "myclave", "pruebas1");
+
+      $sql = "SELECT Evento, Hora FROM trama WHERE Evento LIKE '%".$nemo." en MT%' and fecha=current_date order by hora desc  limit 150";
+    $sql2 = "SELECT Hora FROM trama WHERE Evento LIKE '%".$nemo." en MT%' and fecha=current_date order by Hora desc limit 1, 160";
     $result = mysqli_query($conn,$sql);
     $result2 = mysqli_query($conn,$sql2);
   }
@@ -56,7 +58,7 @@ echo "<body>";
 
       //**************************************************************
       //Char_data se compone de: xValores, yValor1, ...yValorn.
-      $chart_data .= "{ Hora:'".$row["Hora"]."', Intervalo:". $itemCadena[0] . ", IntervaloInf:". $itemCadena[1] . ", IntervaloSup:". $itemCadena[2] . "}, ";
+      $chart_data .= "{ Hora:'".$row["Hora"]."', Intervalo:". $itemCadena[0] . ", IntervaloInf:". $itemCadena[1] . ", IntervaloSup:". $itemCadena[2] . "},";
       //**************************************************************
     }
   } else { echo "0 results"; }
@@ -69,7 +71,7 @@ echo "<body>";
   echo "<div class='col'>";
   echo "<table style='width:60% float: left;'>";
   echo "<tbody>";
-  echo "<h2 align='center'>Grafico de Control de Intervalos</h2>";
+  echo "<h2 align='center'>Intervalos Línea:".$linea." Terminal:".$nemo."</h2>";
   echo "<br /><br />";
   //echo "<div id='chart'></div>";
   echo "<div id='chartL".$linea."-".$nemo."'></div>";

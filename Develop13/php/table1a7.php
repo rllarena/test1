@@ -14,7 +14,7 @@ $linea = $_POST['linea'];
 $nemo = $_POST['nemo'];
 //echo "<p style='text-align:center;'>L&iacutenea:" . $linea . " nem&oacutenico:" . $nemo."</p>";
 
-$conn = mysqli_connect("localhost", "myuser", "myclave", "pruebas1");
+$conn = mysqli_connect("50.192.92.17", "myuser", "myclave", "pruebas1");
 // Check connection
 if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
@@ -22,14 +22,16 @@ if ($conn->connect_error) {
 
 if ($linea!='7'){
   //echo "ES DIFERENTE DE LINEA 7.<br>";
-  $sql = "SELECT Evento, Hora FROM linea".$linea." WHERE Evento LIKE '%".$nemo." en MT%' and fecha=CURRENT_DATE order by hora desc  limit 15";
-  $sql2 = "SELECT Hora FROM linea".$linea." WHERE Evento LIKE '%".$nemo." en MT%' and fecha=CURRENT_DATE order by Hora desc limit 1, 16";
+  $sql = "SELECT Evento, Hora FROM linea".$linea." WHERE Evento LIKE '%".$nemo." en MT%' and fecha=current_date order by hora desc  limit 15";
+  $sql2 = "SELECT Hora FROM linea".$linea." WHERE Evento LIKE '%".$nemo." en MT%' and fecha=current_date order by Hora desc limit 1, 16";
   $result = mysqli_query($conn,$sql);
   $result2 = mysqli_query($conn,$sql2);
 } else {
   //echo "ES IGUAL A LINEA 7.<br>";
-  $sql = "SELECT Evento, Hora FROM trama WHERE Evento LIKE '%".$nemo." en MT%' and fecha=CURRENT_DATE order by hora desc  limit 15";
-  $sql2 = "SELECT Hora FROM trama WHERE Evento LIKE '%".$nemo." en MT%' and fecha=CURRENT_DATE order by Hora desc limit 1, 16";
+    $conn = mysqli_connect("50.192.92.18", "myuser", "myclave", "pruebas1");
+
+    $sql = "SELECT Evento, Hora FROM trama WHERE Evento LIKE '%".$nemo." en MT%' and fecha=current_date order by hora desc  limit 15";
+  $sql2 = "SELECT Hora FROM trama WHERE Evento LIKE '%".$nemo." en MT%' and fecha=current_date order by Hora desc limit 1, 16";
   $result = mysqli_query($conn,$sql);
   $result2 = mysqli_query($conn,$sql2);
 }
@@ -39,14 +41,17 @@ if ($linea!='7'){
 
 <?php
   echo "Fecha: ".date('d-m-Y');
-    echo "<table>";
+      echo "<table width='80%' cellspacing='5px' style='border-spacing: 5px'>";
       echo "<tr>";
-        echo "<th>TERMINAL</th>";
-        echo "<th>HoraSalida</th>";
-        echo "<th>HoraSalidaAnterior</th>";
-        echo "<th>IntervaloReal</th>";
-        echo "<th>IntervaloTabla</th>";
-        echo "<th>IntReal-IntTabla</th>";
+      echo "<th rowspan='2'>Terminal</th>";
+      echo "<th rowspan='2'>Hora</th>";
+      echo "<th colspan='2' style='text-align:center'>Intervalo</th>";
+      echo "<th rowspan='2'>Diferencia</th>";
+      echo "<th rowspan='2'>Semáforo</th>";
+      echo "</tr>";
+      echo "<tr>";
+      echo "<th>Real</th>";
+      echo "<th>Vigente</th>";
       echo "</tr>";
     while($row = $result->fetch_assoc() and $row2 = $result2->fetch_assoc()) {
       $t1= new DateTime($row["Hora"]);//Hora salida
@@ -56,7 +61,7 @@ if ($linea!='7'){
         echo "<tr>";
           echo "<th>".$nemo."</th>";
           echo "<td>" . $row["Hora"]. "</td>";
-          echo "<td>" . $row2["Hora"] . "</td>";
+          //echo "<td>" . $row2["Hora"] . "</td>";
           echo "<td>" . $intervalo->format('%H:%I:%S') . "</td>";//Diferencia
           echo compara($linea, $nemo, $row["Hora"],$row2["Hora"],$intervalo->format('%H:%I:%S'));
     }

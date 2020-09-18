@@ -77,7 +77,6 @@
         //echo "<td>" . $row2["Hora"] . "</td>";
         echo "<td>" . $intervalo->format('%H:%I:%S') . "</td>";//Diferencia
         echo compara($row["Hora"],$row2["Hora"],$intervalo->format('%H:%I:%S'));
-        //echo "<td>" . $sum->format('%H:%I:%S') . "</td>";
     }
     //echo "</table>";
   } else { echo "0 results"; }
@@ -111,6 +110,7 @@
   mysqli_free_result($result);
   mysqli_free_result($result2);
   mysqli_close($conn);
+
   ?>
 
     </tbody>
@@ -131,6 +131,7 @@
 </div>
 </div>
 </div>
+
 <!-- Table  -->
 <!-- <script src="./js/test.js" charset="utf-8"></script> -->
 </body>
